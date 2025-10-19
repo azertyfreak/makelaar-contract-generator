@@ -1,0 +1,77 @@
+# .gitkeep Files
+
+Maak deze lege bestanden aan om folders in git te behouden:
+
+## backend/uploads/.gitkeep
+```
+# Dit bestand zorgt ervoor dat de uploads folder in git blijft
+# De folder zelf wordt gebruikt voor tijdelijke uploads
+```
+
+## backend/generated_contracts/.gitkeep
+```
+# Dit bestand zorgt ervoor dat de generated_contracts folder in git blijft
+# De folder zelf wordt gebruikt voor gegenereerde contracten
+```
+
+## backend/templates/README.md
+```markdown
+# Template Folder
+
+## Upload je Word template hier
+
+1. **Naam**: `template.docx`
+2. **Locatie**: Plaats het bestand in deze folder
+3. **Format**: Microsoft Word (.docx)
+
+## Template Vereisten
+
+Het template moet alle 153 velden bevatten in het format:
+
+```
+{{veldnaam}}
+```
+
+### Belangrijke Velden
+
+- `{{verkoper_naam}}` - Naam verkoper
+- `{{koper_naam}}` - Naam koper
+- `{{goed_straat}}` - Straat van het goed
+- `{{prijs_totaal}}` - Totale koopprijs
+- ... (zie volledige lijst in documentatie)
+
+### Conditionele Secties
+
+Voor conditionele tekst:
+
+```
+{{#if voorwaarde}}
+  Deze tekst wordt alleen getoond als voorwaarde waar is
+{{/if}}
+```
+
+## Template Verkrijgen
+
+Het originele template bestand `Template document.docx` moet je zelf uploaden.
+
+## Validatie
+
+Test je template:
+
+```bash
+python -c "from backend.word_generator import ContractGenerator; ContractGenerator().validate_template('backend/templates/template.docx')"
+```
+
+## Troubleshooting
+
+**"Template not found"**
+- Check dat het bestand `template.docx` heet (lowercase)
+- Check dat het in de juiste folder staat
+- Refresh de file tree in Replit
+
+**"Template error"**
+- Check dat alle veldnamen correct zijn
+- Check dat er geen speciale karakters in veldnamen staan
+- Test met een simpel template eerst
+```
+```
