@@ -218,9 +218,10 @@ def status():
     })
 
 if __name__ == '__main__':
+    # Railway/Render compatibility - gebruik PORT env variable
     port = int(os.getenv('PORT', 5000))
-    host = os.getenv('HOST', '0.0.0.0')
-    debug = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
+    host = '0.0.0.0'  # Moet 0.0.0.0 zijn voor Railway
+    debug = False  # Altijd False in productie
     
     print("=" * 70)
     print("🏠 MAKELAAR CONTRACT GENERATOR")
@@ -228,7 +229,8 @@ if __name__ == '__main__':
     print(f"🌐 Server: http://{host}:{port}")
     print(f"📊 Status: http://{host}:{port}/api/status")
     print(f"🧪 Demo: POST http://{host}:{port}/api/demo/populate")
-    print(f"🔧 Environment: {'Replit' if os.getenv('REPL_SLUG') else 'Local'}")
+    print(f"🔧 Environment: {os.getenv('RAILWAY_ENVIRONMENT', 'Local')}")
     print("=" * 70)
     
-    app.run(host=host, port=port, debug=debug)
+    # CRITICAL: Gebruik threads voor Railway compatibility
+    app.run(host=host, port=port, debug=debug, threaded=True)
