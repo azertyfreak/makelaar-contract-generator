@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Makelaar Contract Generator - Main Entry Point
-Entry point voor zowel lokale development als Replit deployment
+Entry point voor zowel lokale development als Render/Railway deployment
 
 Author: Your Name
 License: MIT
@@ -14,7 +14,7 @@ from pathlib import Path
 # Ensure backend is in path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from flask import send_from_directory
+from flask import send_from_directory, send_file
 from backend.api import app, database
 from backend.database import ensure_directories
 
@@ -25,7 +25,44 @@ ensure_directories()
 @app.route('/')
 def serve_frontend():
     """Serve the main frontend page"""
-    return send_from_directory('frontend', 'index.html')
+    frontend_path = os.path.join(os.path.dirname(__file__), 'frontend', 'index.html')
+    if os.path.exists(frontend_path):
+        return send_file(frontend_path)
+    else:
+        # Fallback: redirect naar API status
+        return """
+        <html>
+        <head><title>Makelaar Contract Generator</title></head>
+        <body style="font-family: Arial; max-width: 800px; margin: 50px auto; padding: 20px;">
+            <h1>🏠 Makelaar Contract Generator API</h1>
+            <p>De API draait! Frontend niet gevonden.</p>
+            <h2>API Endpoints:</h2>
+            <ul>
+                <li><a href="/health">GET /health</a> - Health check</li>
+                <li><a href="/api/status">GET /api/status</a> - System status</li>
+                <li><a href="/api/documents/types">GET /api/documents/types</a> - Document types</li>
+                <li><a href="/api/contracts">GET /api/contracts</a> - List contracts</li>
+                <li>POST /api/contract/create - Create contract</li>
+                <li>POST /api/demo/populate - Create demo contract</li>
+            </ul>
+            <h3>Quick Test:</h3>
+            <button onclick="testAPI()">Create Demo Contract</button>
+            <pre id="result" style="background: #f5f5f5; padding: 15px; margin-top: 10px;"></pre>
+            <script>
+                async function testAPI() {
+                    document.getElementById('result').textContent = 'Creating demo contract...';
+                    try {
+                        const res = await fetch('/api/demo/populate', { method: 'POST' });
+                        const data = await res.json();
+                        document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+                    } catch(e) {
+                        document.getElementById('result').textContent = 'Error: ' + e.message;
+                    }
+                }
+            </script>
+        </body>
+        </html>
+        """
 
 @app.route('/assets/<path:path>')
 def serve_assets(path):
@@ -211,16 +248,16 @@ def status():
     from flask import jsonify
     return jsonify({
         'status': 'online',
-        'environment': 'replit' if os.getenv('REPL_SLUG') else 'local',
+        'environment': os.getenv('RENDER', 'local'),
         'contracts_count': len(database['contracts']),
         'documents_count': sum(len(c.get('documents', {})) for c in database['contracts'].values()),
         'version': '1.0.0'
     })
 
 if __name__ == '__main__':
-    # Railway/Render compatibility - gebruik PORT env variable
+    # Render/Railway compatibility - gebruik PORT env variable
     port = int(os.getenv('PORT', 5000))
-    host = '0.0.0.0'  # Moet 0.0.0.0 zijn voor Railway
+    host = '0.0.0.0'  # Moet 0.0.0.0 zijn voor deployment
     debug = False  # Altijd False in productie
     
     print("=" * 70)
@@ -229,8 +266,8 @@ if __name__ == '__main__':
     print(f"🌐 Server: http://{host}:{port}")
     print(f"📊 Status: http://{host}:{port}/api/status")
     print(f"🧪 Demo: POST http://{host}:{port}/api/demo/populate")
-    print(f"🔧 Environment: {os.getenv('RAILWAY_ENVIRONMENT', 'Local')}")
+    print(f"🔧 Environment: {os.getenv('RENDER_SERVICE_NAME', 'Local')}")
     print("=" * 70)
     
-    # CRITICAL: Gebruik threads voor Railway compatibility
+    # CRITICAL: Gebruik threads voor deployment compatibility
     app.run(host=host, port=port, debug=debug, threaded=True)
