@@ -1,0 +1,22 @@
+# requirements.txt - Railway Optimized
+# Lightgewicht versie zonder zware OCR libraries
+
+# Web Framework
+flask==3.0.0
+flask-cors==4.0.0
+gunicorn==21.2.0
+
+# Document Processing
+python-docx==1.1.0
+docxtpl==0.16.7
+Pillow==10.1.0
+
+# PDF Processing (lightweight)
+PyPDF2==3.0.1
+
+# Utilities
+werkzeug==3.0.1
+python-dotenv==1.0.0
+
+# NOTITIE: OCR libraries (easyocr, opencv) zijn uitgeschakeld voor Railway
+# Gebruik OCR_ENGINE=mock in environment variables
