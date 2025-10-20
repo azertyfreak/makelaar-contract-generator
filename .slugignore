@@ -1,0 +1,43 @@
+# .slugignore - Files to exclude from Railway build
+
+# Git
+.git/
+.gitignore
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+
+# Docs
+docs/
+*.md
+!README.md
+
+# Tests
+tests/
+
+# Local files
+.env
+.env.local
+
+# Large files
+backend/uploads/*
+backend/generated_contracts/*
+*.pdf
+*.docx
+
+# OS
+.DS_Store
+Thumbs.db
